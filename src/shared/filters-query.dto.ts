@@ -1,5 +1,12 @@
 import { Type } from 'class-transformer';
-import { IsIn, IsInt, IsNumber, IsOptional, IsString, Min } from 'class-validator';
+import {
+  IsIn,
+  IsInt,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Min,
+} from 'class-validator';
 
 export class FiltersQueryDto {
   @IsOptional()
@@ -16,19 +23,19 @@ export class FiltersQueryDto {
   })
   @Type(() => Number)
   limit: number = 10;
-    
-    @IsOptional()
-    @IsString()
-    @IsIn(['open', 'closed'], {
-        message: 'status must be either open or closed',    
-    })
-    status!: string;
 
-    @IsOptional()
-    @IsNumber()
-    minPrice!: number
+  @IsOptional()
+  @IsString()
+  @IsIn(['open', 'closed'], {
+    message: 'status must be either open or closed',
+  })
+  status!: string;
 
-    @IsOptional()
-    @IsNumber()
-    maxPrice!: number
+  @IsOptional()
+  @IsNumber()
+  minPrice!: number;
+
+  @IsOptional()
+  @IsNumber()
+  maxPrice!: number;
 }
