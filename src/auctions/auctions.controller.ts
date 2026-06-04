@@ -6,14 +6,16 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
+  Query,
 } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
-import { AuctionsService } from './auctions.service';
-import { ResponseAuctionDto } from './dto/response-auction.dto';
-import { CreateAuctionDto } from './dto/create-auction.dto';
-import { OffersService } from '../offers/offers.service';
 import { CreateBidDto } from '../offers/dto/create-bid.dto';
 import { OfferResponseDto } from '../offers/dto/offer-reponse.dto';
+import { OffersService } from '../offers/offers.service';
+import { FiltersQueryDto } from '../shared/filters-query.dto';
+import { AuctionsService } from './auctions.service';
+import { CreateAuctionDto } from './dto/create-auction.dto';
+import { ResponseAuctionDto } from './dto/response-auction.dto';
 
 @Controller('auctions')
 export class AuctionsController {
@@ -23,8 +25,8 @@ export class AuctionsController {
   ) {}
 
   @Get()
-  async getAllAuctions() {
-    const auctions = await this.auctionsService.getAll();
+  async getAllAuctions(@Query() filtersQueryDto: FiltersQueryDto) {
+    const auctions = await this.auctionsService.getAll(filtersQueryDto);
     return plainToInstance(ResponseAuctionDto, auctions);
   }
 
