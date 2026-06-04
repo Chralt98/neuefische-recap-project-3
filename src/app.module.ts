@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuctionsModule } from './auctions/auctions.module';
+import { Auction } from './auctions/entities/auction.entitiy';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 
@@ -11,7 +12,7 @@ import { UsersModule } from './users/users.module';
     TypeOrmModule.forRoot({
       type: 'better-sqlite3',
       database: './data/auctions.sqlite',
-      entities: [],
+      entities: [Auction],
       synchronize: true,
       logging: false,
       enableWAL: true,
