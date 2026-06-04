@@ -23,4 +23,8 @@ export class UsersService {
     const user = await this.users.save(userEntity);
     return plainToInstance(UserResponseDto, user);
   }
+
+  findByUsername(username: string): Promise<UserResponseDto | null> {
+    return this.users.findOneBy({ username });
+  }
 }
