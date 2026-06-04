@@ -6,13 +6,15 @@ import { AuctionsModule } from './auctions/auctions.module';
 import { Auction } from './auctions/entities/auction.entitiy';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
+import { OffersModule } from './offers/offers.module';
+import { Offer } from './offers/entities/offer.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: 'better-sqlite3',
       database: './data/auctions.sqlite',
-      entities: [Auction],
+      entities: [Auction, Offer],
       synchronize: true,
       logging: false,
       enableWAL: true,
@@ -21,6 +23,7 @@ import { UsersModule } from './users/users.module';
     AuctionsModule,
     UsersModule,
     AuthModule,
+    OffersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
