@@ -9,6 +9,12 @@ import * as brypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 
 export interface JwtPayload {
+  username: string;
+  sub: string;
+  roles: string[];
+}
+
+export interface AuthUser {
   id: string;
   username: string;
 }
@@ -35,8 +41,12 @@ export class AuthService {
     }
   }
 
-  login(user: JwtPayload) {
-    const payload: JwtPayload = { id: user.id, username: user.username };
+  login(user: AuthUser): { access_token: string } {
+    const payload: JwtPayload = {
+      username: user.username,
+      sub: user.id,
+      roles: [],
+    };
     return {
       access_token: this.jwtService.sign(payload),
     };
