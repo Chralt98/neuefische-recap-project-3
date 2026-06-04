@@ -8,13 +8,16 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { OffersModule } from './offers/offers.module';
 import { Offer } from './offers/entities/offer.entity';
+import { ConfigModule } from '@nestjs/config';
+import { User } from './users/entities/user.entity';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRoot({
       type: 'better-sqlite3',
       database: './data/auctions.sqlite',
-      entities: [Auction, Offer],
+      entities: [Auction, Offer, User],
       synchronize: true,
       logging: false,
       enableWAL: true,
