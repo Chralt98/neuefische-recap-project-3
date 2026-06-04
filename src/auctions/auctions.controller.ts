@@ -1,14 +1,28 @@
-import { Body, Controller, Get, Param, ParseUUIDPipe, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  NotFoundException,
+  Param,
+  ParseUUIDPipe,
+  Post,
+} from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
 import { AuctionsService } from './auctions.service';
 import { ResponseAuctionDto } from './dto/response-auction.dto';
 import { CreateAuctionDto } from './dto/create-auction.dto';
+import { OffersService } from '../offers/offers.service';
+import { CreateBidDto } from '../offers/dto/create-bid.dto';
+import { OfferResponseDto } from '../offers/dto/offer-reponse.dto';
 
 @Controller('auctions')
 export class AuctionsController {
-  constructor(private readonly auctionsService: AuctionsService) { }
-  
-  @Get('')
+  constructor(
+    private readonly auctionsService: AuctionsService,
+    private readonly offersService: OffersService,
+  ) {}
+
+  @Get()
   async getAllAuctions() {
     const auctions = await this.auctionsService.getAll();
     return plainToInstance(ResponseAuctionDto, auctions);
@@ -23,5 +37,18 @@ export class AuctionsController {
   @Post()
   createAuction(@Body() dto: CreateAuctionDto): Promise<ResponseAuctionDto> {
     return this.auctionsService.create(dto);
+  }
+
+  @Post(':id/offers')
+  createBid(
+    @Param('auctionId', ParseUUIDPipe) auctionId: string,
+    @Body() dto: CreateBidDto,
+  ): Promise<OfferResponseDto> {
+    const auction = this.auctionsService.getById(auctionId);
+    if (!auction) {
+      throw new NotFoundException(`Auction with id ${auctionId} not found`);
+    }
+
+    return this.auctionsService.createBid(auctionId, dto.bidder, dto.price);
   }
 }

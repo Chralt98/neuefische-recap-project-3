@@ -3,6 +3,7 @@ import { OffersService } from './offers.service';
 import { OffersController } from './offers.controller';
 
 @Module({
+  exports: [OffersService],
   controllers: [OffersController],
   providers: [OffersService],
 })

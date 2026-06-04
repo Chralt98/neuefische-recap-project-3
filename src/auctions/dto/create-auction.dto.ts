@@ -24,10 +24,6 @@ export class CreateAuctionDto {
   @Min(0)
   startingPrice!: number;
 
-  @IsNumber()
-  @Min(0)
-  currentPrice!: number;
-
   @IsDate()
   @IsOptional()
   @Type(() => Date)
