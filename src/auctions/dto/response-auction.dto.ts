@@ -1,9 +1,8 @@
 import { Expose, Type } from 'class-transformer';
 
 export class ResponseAuctionDto {
-
-    @Expose()
-    id!: string; 
+  @Expose()
+  id!: string;
 
   @Expose()
   title!: string;
