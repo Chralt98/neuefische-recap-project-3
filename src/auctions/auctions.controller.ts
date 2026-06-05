@@ -9,13 +9,12 @@ import {
   Query,
   Req,
 } from '@nestjs/common';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOkResponse } from '@nestjs/swagger';
 import { plainToInstance } from 'class-transformer';
 import { AuthUser } from '../auth/auth.service';
 import { Public } from '../common/decorators/public.decorator';
 import { CreateBidDto } from '../offers/dto/create-bid.dto';
 import { OfferResponseDto } from '../offers/dto/offer-reponse.dto';
-import { OffersService } from '../offers/offers.service';
 import { FiltersQueryDto } from '../shared/filters-query.dto';
 import { AuctionsService } from './auctions.service';
 import { CreateAuctionDto } from './dto/create-auction.dto';
@@ -23,13 +22,11 @@ import { ResponseAuctionDto } from './dto/response-auction.dto';
 
 @Controller('auctions')
 export class AuctionsController {
-  constructor(
-    private readonly auctionsService: AuctionsService,
-    private readonly offersService: OffersService,
-  ) {}
+  constructor(private readonly auctionsService: AuctionsService) {}
 
   @Get()
   @Public()
+  @ApiOkResponse({ type: [ResponseAuctionDto] })
   async getAllAuctions(@Query() filtersQueryDto: FiltersQueryDto): Promise<{
     data: ResponseAuctionDto[];
     meta: {
@@ -45,6 +42,7 @@ export class AuctionsController {
 
   @Get(':id')
   @Public()
+  @ApiOkResponse({ type: ResponseAuctionDto })
   async getAuctionById(@Param('id', ParseUUIDPipe) id: string) {
     const auction = await this.auctionsService.getById(id);
     return plainToInstance(ResponseAuctionDto, auction);
@@ -61,6 +59,7 @@ export class AuctionsController {
 
   @ApiBearerAuth()
   @Post(':id/offers')
+  @ApiOkResponse({ type: OfferResponseDto })
   async createBid(
     @Req() req: Request & { user: AuthUser },
     @Param('id', ParseUUIDPipe) auctionId: string,
