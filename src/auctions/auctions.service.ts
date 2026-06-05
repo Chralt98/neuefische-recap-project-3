@@ -63,7 +63,7 @@ export class AuctionsService {
 
     const [auctions, totalItems] = await this.auction.findAndCount({
       order: {
-        createdAt: 'DESC',
+        endDate: 'DESC',
       },
       relations: {
         offers: true,

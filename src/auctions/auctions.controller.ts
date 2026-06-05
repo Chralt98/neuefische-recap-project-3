@@ -13,7 +13,6 @@ import {
   ApiBearerAuth,
   ApiCreatedResponse,
   ApiOkResponse,
-  ApiTags,
 } from '@nestjs/swagger';
 import { plainToInstance } from 'class-transformer';
 import { AuthUser } from '../auth/auth.service';
