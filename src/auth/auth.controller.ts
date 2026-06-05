@@ -1,4 +1,11 @@
-import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOkResponse } from '@nestjs/swagger';
 import { LoginResponseDto } from '../auctions/dto/login-response.dto';
@@ -27,6 +34,7 @@ export class AuthController {
   @Public()
   @UseGuards(AuthGuard('local'))
   @Post('login')
+  @HttpCode(200)
   @ApiOkResponse({ type: LoginResponseDto })
   login(
     @Req() req: Request & { user: AuthUser },

@@ -1,3 +1,4 @@
+import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
   IsIn,
@@ -9,12 +10,17 @@ import {
 } from 'class-validator';
 
 export class FiltersQueryDto {
+  @ApiPropertyOptional({ default: 1, minimum: 1 })
   @IsOptional()
   @IsInt()
   @Min(1)
   @Type(() => Number)
   page: number = 1;
 
+  @ApiPropertyOptional({
+    default: 10,
+    enum: [1, 2, 3, 10, 20, 30, 50, 100],
+  })
   @IsOptional()
   @IsInt()
   @Min(1)
@@ -24,6 +30,7 @@ export class FiltersQueryDto {
   @Type(() => Number)
   limit: number = 10;
 
+  @ApiPropertyOptional({ enum: ['open', 'closed'] })
   @IsOptional()
   @IsString()
   @IsIn(['open', 'closed'], {
@@ -31,10 +38,12 @@ export class FiltersQueryDto {
   })
   status!: string;
 
+  @ApiPropertyOptional({ example: 50 })
   @IsOptional()
   @IsNumber()
   minPrice!: number;
 
+  @ApiPropertyOptional({ example: 500 })
   @IsOptional()
   @IsNumber()
   maxPrice!: number;

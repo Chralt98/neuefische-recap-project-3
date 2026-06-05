@@ -3,55 +3,66 @@ import { Expose, Type } from 'class-transformer';
 import { OfferResponseDto } from '../../offers/dto/offer-reponse.dto';
 
 export class ResponseAuctionDto {
-  @ApiProperty({
-    description: 'The text content of the message',
-    example: 'Hello, world!',
-  })
+  @ApiProperty({ example: '123e4567-e89b-12d3-a456-426614174000' })
   @Expose()
   id!: string;
 
-  @ApiProperty({
-    description: 'The title of the auction',
-    example: 'Vintage Camera',
-  })
+  @ApiProperty({ example: 'Vintage Camera' })
   @Expose()
   title!: string;
+
   @ApiProperty({
-    description: 'The description of the auction',
-    example: 'A beautiful vintage camera in excellent condition.',
+    example: 'A fully working 35mm camera with original leather case.',
   })
   @Expose()
   description!: string;
-  @ApiProperty({
-    description: 'The starting price of the auction',
-    example: 100.0,
-  })
+
+  @ApiProperty({ example: 100 })
   @Expose()
   startingPrice!: number;
 
-  @ApiProperty({
-    description: 'The current price of the auction',
-    example: 150.0,
-  })
+  @ApiProperty({ example: 150 })
   @Expose()
   currentPrice!: number;
 
-  @ApiProperty({
-    description: 'Should be a date in ISO format in the future',
-    example: '2023-12-31T23:59:59.999Z',
-  })
+  @ApiProperty({ example: '2026-06-08T12:00:00.000Z' })
   @Expose()
   @Type(() => Date)
   endDate!: Date;
-  @ApiProperty()
+
+  @ApiProperty({ example: 'alice' })
   @Expose()
   seller!: string;
 
   @ApiProperty({
-    description: 'List of offers placed on this auction',
-    type: () => [OfferResponseDto], //offer not visible in swagger
+    type: () => [OfferResponseDto],
   })
   @Expose()
   @Type(() => OfferResponseDto)
   offers!: OfferResponseDto[];
+}
+
+class AuctionsMetaDto {
+  @ApiProperty({ example: 42 })
+  totalItems!: number;
+
+  @ApiProperty({ example: 10 })
+  itemCount!: number;
+
+  @ApiProperty({ example: 10 })
+  itemsPerPage!: number;
+
+  @ApiProperty({ example: 5 })
+  totalPages!: number;
+
+  @ApiProperty({ example: 1 })
+  currentPage!: number;
+}
+
+export class AuctionsResponseDto {
+  @ApiProperty({ type: () => [ResponseAuctionDto] })
+  data!: ResponseAuctionDto[];
+
+  @ApiProperty({ type: () => AuctionsMetaDto })
+  meta!: AuctionsMetaDto;
 }

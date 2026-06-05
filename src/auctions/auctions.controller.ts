@@ -9,7 +9,12 @@ import {
   Query,
   Req,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOkResponse } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { plainToInstance } from 'class-transformer';
 import { AuthUser } from '../auth/auth.service';
 import { Public } from '../common/decorators/public.decorator';
@@ -18,7 +23,11 @@ import { OfferResponseDto } from '../offers/dto/offer-reponse.dto';
 import { FiltersQueryDto } from '../shared/filters-query.dto';
 import { AuctionsService } from './auctions.service';
 import { CreateAuctionDto } from './dto/create-auction.dto';
-import { ResponseAuctionDto } from './dto/response-auction.dto';
+import {
+  AuctionsResponseDto,
+  ResponseAuctionDto,
+} from './dto/response-auction.dto';
+import { ApiCreateOffer } from './swagger/api-create-offer.decorator';
 
 @Controller('auctions')
 export class AuctionsController {
@@ -26,17 +35,10 @@ export class AuctionsController {
 
   @Get()
   @Public()
-  @ApiOkResponse({ type: [ResponseAuctionDto] })
-  async getAllAuctions(@Query() filtersQueryDto: FiltersQueryDto): Promise<{
-    data: ResponseAuctionDto[];
-    meta: {
-      totalItems: number;
-      itemCount: number;
-      itemsPerPage: number;
-      totalPages: number;
-      currentPage: number;
-    };
-  }> {
+  @ApiOkResponse({ type: AuctionsResponseDto })
+  async getAllAuctions(
+    @Query() filtersQueryDto: FiltersQueryDto,
+  ): Promise<AuctionsResponseDto> {
     return await this.auctionsService.getAll(filtersQueryDto);
   }
 
@@ -50,6 +52,7 @@ export class AuctionsController {
 
   @ApiBearerAuth()
   @Post()
+  @ApiCreatedResponse({ type: ResponseAuctionDto })
   async createAuction(
     @Req() req: Request & { user: AuthUser },
     @Body() dto: CreateAuctionDto,
@@ -57,9 +60,8 @@ export class AuctionsController {
     return await this.auctionsService.create(dto, req.user.username);
   }
 
-  @ApiBearerAuth()
   @Post(':id/offers')
-  @ApiOkResponse({ type: OfferResponseDto })
+  @ApiCreateOffer()
   async createBid(
     @Req() req: Request & { user: AuthUser },
     @Param('id', ParseUUIDPipe) auctionId: string,
