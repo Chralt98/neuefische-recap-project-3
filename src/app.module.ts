@@ -18,9 +18,9 @@ import { JwtAuthGuard } from './auth/jwt-auth.guard';
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRoot({
       type: 'better-sqlite3',
-      database: './data/auctions.sqlite',
+      database: './data/darkbay.sqlite',
       entities: [Auction, Offer, User],
-      synchronize: true,
+      synchronize: false,
       logging: false,
       enableWAL: true,
       statementCacheSize: 100,
