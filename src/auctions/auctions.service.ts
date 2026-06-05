@@ -115,6 +115,10 @@ export class AuctionsService {
   ): Promise<OfferResponseDto> {
     const auction = await this.auction.findOneBy({ id: auctionId });
 
+    if (bidder === auction?.seller) {
+      throw new ConflictException('Seller cannot bid on their own auction');
+    }
+
     if (!auction) {
       throw new NotFoundException(`Auction with id ${auctionId} not found`);
     }

@@ -9,7 +9,10 @@ import {
   Query,
   Req,
 } from '@nestjs/common';
+import { ApiBearerAuth } from '@nestjs/swagger';
 import { plainToInstance } from 'class-transformer';
+import { AuthUser } from '../auth/auth.service';
+import { Public } from '../common/decorators/public.decorator';
 import { CreateBidDto } from '../offers/dto/create-bid.dto';
 import { OfferResponseDto } from '../offers/dto/offer-reponse.dto';
 import { OffersService } from '../offers/offers.service';
@@ -17,9 +20,6 @@ import { FiltersQueryDto } from '../shared/filters-query.dto';
 import { AuctionsService } from './auctions.service';
 import { CreateAuctionDto } from './dto/create-auction.dto';
 import { ResponseAuctionDto } from './dto/response-auction.dto';
-import { Public } from '../common/decorators/public.decorator';
-import { ApiBearerAuth } from '@nestjs/swagger';
-import { AuthUser } from '../auth/auth.service';
 
 @Controller('auctions')
 export class AuctionsController {
@@ -50,6 +50,7 @@ export class AuctionsController {
     return plainToInstance(ResponseAuctionDto, auction);
   }
 
+  @ApiBearerAuth()
   @Post()
   async createAuction(
     @Req() req: Request & { user: AuthUser },
@@ -58,6 +59,7 @@ export class AuctionsController {
     return await this.auctionsService.create(dto, req.user.username);
   }
 
+  @ApiBearerAuth()
   @Post(':id/offers')
   async createBid(
     @Req() req: Request & { user: AuthUser },
@@ -65,7 +67,7 @@ export class AuctionsController {
     @Body() dto: CreateBidDto,
   ): Promise<OfferResponseDto> {
     console.log('Received bid:', { auctionId, ...dto });
-    const auction = this.auctionsService.getById(auctionId);
+    const auction = await this.auctionsService.getById(auctionId);
     if (!auction) {
       throw new NotFoundException(`Auction with id ${auctionId} not found`);
     }

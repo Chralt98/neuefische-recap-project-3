@@ -15,6 +15,7 @@ export class UsersService {
   ) {}
 
   async create(dto: CreateUserDto): Promise<UserResponseDto> {
+    //check if username already exists
     const passwordHash = await bcrypt.hash(dto.password, 10);
     const userEntity = this.users.create({
       username: dto.username,
