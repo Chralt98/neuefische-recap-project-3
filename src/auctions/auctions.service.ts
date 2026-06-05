@@ -28,7 +28,16 @@ export class AuctionsService {
     private readonly offersService: OffersService,
   ) {}
 
-  public async getAll(filtersQueryDto: FiltersQueryDto) {
+  public async getAll(filtersQueryDto: FiltersQueryDto): Promise<{
+    data: ResponseAuctionDto[];
+    meta: {
+      totalItems: number;
+      itemCount: number;
+      itemsPerPage: number;
+      totalPages: number;
+      currentPage: number;
+    };
+  }> {
     const { page, limit, status, minPrice, maxPrice } = filtersQueryDto;
 
     const where: FindOptionsWhere<Auction> = {};
@@ -82,16 +91,17 @@ export class AuctionsService {
     return this.auction.findOneBy({ id });
   }
 
-  public create(dto: CreateAuctionDto) {
+  public async create(dto: CreateAuctionDto): Promise<ResponseAuctionDto> {
     if (!dto.endDate) {
-      const endDate = new Date(Date.now() + 24 * 60 * 60 * 3);
+      const endDate = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000);
       dto.endDate = endDate;
     }
     const auction = this.auction.create({
       ...dto,
       currentPrice: dto.startingPrice,
     });
-    return this.auction.save(auction);
+    const savedAuction = await this.auction.save(auction);
+    return plainToInstance(ResponseAuctionDto, savedAuction);
   }
 
   public async createBid(

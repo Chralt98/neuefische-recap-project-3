@@ -22,8 +22,6 @@ export class OffersService {
       price,
     });
     await this.offers.save(offer);
-    return plainToInstance(OfferResponseDto, offer, {
-      excludeExtraneousValues: true,
-    });
+    return plainToInstance(OfferResponseDto, offer);
   }
 }

@@ -25,9 +25,17 @@ export class AuctionsController {
   ) {}
 
   @Get()
-  async getAllAuctions(@Query() filtersQueryDto: FiltersQueryDto) {
-    const auctions = await this.auctionsService.getAll(filtersQueryDto);
-    return plainToInstance(ResponseAuctionDto, auctions);
+  async getAllAuctions(@Query() filtersQueryDto: FiltersQueryDto): Promise<{
+    data: ResponseAuctionDto[];
+    meta: {
+      totalItems: number;
+      itemCount: number;
+      itemsPerPage: number;
+      totalPages: number;
+      currentPage: number;
+    };
+  }> {
+    return await this.auctionsService.getAll(filtersQueryDto);
   }
 
   @Get(':id')
@@ -37,20 +45,21 @@ export class AuctionsController {
   }
 
   @Post()
-  createAuction(@Body() dto: CreateAuctionDto): Promise<ResponseAuctionDto> {
-    return this.auctionsService.create(dto);
+  async createAuction(
+    @Body() dto: CreateAuctionDto,
+  ): Promise<ResponseAuctionDto> {
+    return await this.auctionsService.create(dto);
   }
 
   @Post(':id/offers')
   createBid(
-    @Param('auctionId', ParseUUIDPipe) auctionId: string,
+    @Param('id', ParseUUIDPipe) auctionId: string,
     @Body() dto: CreateBidDto,
   ): Promise<OfferResponseDto> {
     const auction = this.auctionsService.getById(auctionId);
     if (!auction) {
       throw new NotFoundException(`Auction with id ${auctionId} not found`);
     }
-
     return this.auctionsService.createBid(auctionId, dto.bidder, dto.price);
   }
 }
