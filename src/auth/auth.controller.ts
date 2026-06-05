@@ -4,6 +4,7 @@ import { UsersService } from '../users/users.service';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { UserResponseDto } from '../users/dto/user-response.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { Public } from '../common/decorators/public.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -12,6 +13,7 @@ export class AuthController {
     private readonly usersService: UsersService,
   ) {}
 
+  @Public()
   @Post('register')
   async register(
     @Body() createUserDto: CreateUserDto,
@@ -19,6 +21,7 @@ export class AuthController {
     return await this.usersService.create(createUserDto);
   }
 
+  @Public()
   @UseGuards(AuthGuard('local'))
   @Post('login')
   login(

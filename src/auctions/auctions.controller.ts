@@ -16,6 +16,7 @@ import { FiltersQueryDto } from '../shared/filters-query.dto';
 import { AuctionsService } from './auctions.service';
 import { CreateAuctionDto } from './dto/create-auction.dto';
 import { ResponseAuctionDto } from './dto/response-auction.dto';
+import { Public } from '../common/decorators/public.decorator';
 
 @Controller('auctions')
 export class AuctionsController {
@@ -25,6 +26,7 @@ export class AuctionsController {
   ) {}
 
   @Get()
+  @Public()
   async getAllAuctions(@Query() filtersQueryDto: FiltersQueryDto): Promise<{
     data: ResponseAuctionDto[];
     meta: {
@@ -39,6 +41,7 @@ export class AuctionsController {
   }
 
   @Get(':id')
+  @Public()
   async getAuctionById(@Param('id', ParseUUIDPipe) id: string) {
     const auction = await this.auctionsService.getById(id);
     return plainToInstance(ResponseAuctionDto, auction);
