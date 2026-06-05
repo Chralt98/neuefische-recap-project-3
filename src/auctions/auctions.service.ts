@@ -91,13 +91,17 @@ export class AuctionsService {
     return this.auction.findOne({ where: { id }, relations: { offers: true } });
   }
 
-  public async create(dto: CreateAuctionDto): Promise<ResponseAuctionDto> {
+  public async create(
+    dto: CreateAuctionDto,
+    username: string,
+  ): Promise<ResponseAuctionDto> {
     if (!dto.endDate) {
       const endDate = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000);
       dto.endDate = endDate;
     }
     const auction = this.auction.create({
       ...dto,
+      seller: username,
       currentPrice: dto.startingPrice,
     });
     const savedAuction = await this.auction.save(auction);
@@ -115,15 +119,17 @@ export class AuctionsService {
       throw new NotFoundException(`Auction with id ${auctionId} not found`);
     }
 
-    if (price < auction.currentPrice) {
+    if (price <= auction.currentPrice) {
       throw new ConflictException(
         'Bid price must be higher than current or starting price',
       );
     }
-
     if (this.isAuctionClosed(auction.endDate)) {
       throw new ConflictException('Auction has already ended');
     }
+
+    auction.currentPrice = price;
+    await this.auction.save(auction);
     const bid = await this.offersService.createBid(auctionId, bidder, price);
     return plainToInstance(OfferResponseDto, {
       ...bid,

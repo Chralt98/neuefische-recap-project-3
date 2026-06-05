@@ -7,6 +7,7 @@ import {
   ParseUUIDPipe,
   Post,
   Query,
+  Req,
 } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
 import { CreateBidDto } from '../offers/dto/create-bid.dto';
@@ -17,6 +18,8 @@ import { AuctionsService } from './auctions.service';
 import { CreateAuctionDto } from './dto/create-auction.dto';
 import { ResponseAuctionDto } from './dto/response-auction.dto';
 import { Public } from '../common/decorators/public.decorator';
+import { ApiBearerAuth } from '@nestjs/swagger';
+import { AuthUser } from '../auth/auth.service';
 
 @Controller('auctions')
 export class AuctionsController {
@@ -49,13 +52,15 @@ export class AuctionsController {
 
   @Post()
   async createAuction(
+    @Req() req: Request & { user: AuthUser },
     @Body() dto: CreateAuctionDto,
   ): Promise<ResponseAuctionDto> {
-    return await this.auctionsService.create(dto);
+    return await this.auctionsService.create(dto, req.user.username);
   }
 
   @Post(':id/offers')
   async createBid(
+    @Req() req: Request & { user: AuthUser },
     @Param('id', ParseUUIDPipe) auctionId: string,
     @Body() dto: CreateBidDto,
   ): Promise<OfferResponseDto> {
@@ -64,6 +69,10 @@ export class AuctionsController {
     if (!auction) {
       throw new NotFoundException(`Auction with id ${auctionId} not found`);
     }
-    return this.auctionsService.createBid(auctionId, dto.bidder, dto.price);
+    return this.auctionsService.createBid(
+      auctionId,
+      req.user.username,
+      dto.price,
+    );
   }
 }

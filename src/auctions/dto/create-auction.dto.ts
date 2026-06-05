@@ -28,7 +28,4 @@ export class CreateAuctionDto {
   @IsOptional()
   @Type(() => Date)
   endDate!: Date;
-
-  @IsString()
-  seller!: string;
 }
