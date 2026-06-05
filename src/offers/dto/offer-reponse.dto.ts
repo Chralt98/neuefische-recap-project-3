@@ -9,4 +9,7 @@ export class OfferResponseDto {
 
   @Expose()
   price!: number;
+
+  @Expose()
+  auctionId!: string;
 }

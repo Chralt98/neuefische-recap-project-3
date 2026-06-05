@@ -88,7 +88,7 @@ export class AuctionsService {
   }
 
   public getById(id: string) {
-    return this.auction.findOneBy({ id });
+    return this.auction.findOne({ where: { id }, relations: { offers: true } });
   }
 
   public async create(dto: CreateAuctionDto): Promise<ResponseAuctionDto> {
@@ -127,7 +127,7 @@ export class AuctionsService {
     const bid = await this.offersService.createBid(auctionId, bidder, price);
     return plainToInstance(OfferResponseDto, {
       ...bid,
-      auction: { id: auctionId },
+      auctionId,
     });
   }
 

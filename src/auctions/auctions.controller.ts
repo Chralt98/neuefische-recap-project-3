@@ -52,10 +52,11 @@ export class AuctionsController {
   }
 
   @Post(':id/offers')
-  createBid(
+  async createBid(
     @Param('id', ParseUUIDPipe) auctionId: string,
     @Body() dto: CreateBidDto,
   ): Promise<OfferResponseDto> {
+    console.log('Received bid:', { auctionId, ...dto });
     const auction = this.auctionsService.getById(auctionId);
     if (!auction) {
       throw new NotFoundException(`Auction with id ${auctionId} not found`);
